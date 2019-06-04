@@ -1,7 +1,7 @@
 import os
 import pickle
 
-from models import Game
+from models import Game, GameList
 from read_replays import PICKLED_DATA_PATH
 
 
@@ -21,4 +21,4 @@ Run this command every time you play new games.
     with open(path, 'rb') as f:
         serialized_games = pickle.load(f)
 
-    return [Game(g.players, owner_name=owner) for g in serialized_games]
+    return GameList(Game(g.players, owner_name=owner) for g in serialized_games)

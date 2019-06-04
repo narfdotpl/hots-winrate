@@ -23,3 +23,26 @@ class Game:
                 break
         else:  # no break
             raise ValueError('Couldn\'t find player called "{}".'.format(owner_name))
+
+
+class GameList(list):
+    def filter(self, predicate):
+        return GameList(filter(predicate, self))
+
+    @property
+    def winrate(self):
+        wins = self.filter(lambda game: game.owner.did_win)
+        return WinRate(wins=len(wins), total=len(self))
+
+    def __str__(self):
+        return str(self.winrate)
+
+
+class WinRate:
+    def __init__(self, wins, total):
+        self.wins = wins
+        self.total = total
+        self.percentage = float(wins) / total
+
+    def __str__(self):
+        return '{}% ({}/{})'.format(int(round(100 * self.percentage)), self.wins, self.total)

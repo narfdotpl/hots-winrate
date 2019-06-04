@@ -1,6 +1,7 @@
 import os
 import pickle
 
+from constants import maps
 from models import Game, GameList, OwnerPredicate, PlayerPredicate
 from read_replays import PICKLED_DATA_PATH
 
@@ -21,8 +22,13 @@ Run this command every time you play new games.
     with open(path, 'rb') as f:
         serialized_games = pickle.load(f)
 
-    return GameList(Game(g.players, owner_name=owner) for g in serialized_games)
+    return GameList(Game(g.players, g.map, owner) for g in serialized_games)
 
+
+def map_(map):
+    return lambda game: game.map == map
+
+on = map_
 
 owner = OwnerPredicate()
 teammate = PlayerPredicate(is_owner_teammate=True)

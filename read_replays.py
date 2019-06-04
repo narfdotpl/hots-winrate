@@ -1,4 +1,4 @@
-from os.path import dirname, exists, join, realpath
+from os.path import basename, dirname, exists, join, realpath, splitext
 
 import json
 import multiprocessing
@@ -50,6 +50,14 @@ def get_replay_paths():
             yield join(replay_dir, name)
 
 
+def get_map(replay_path):
+    # I'm using the name from the filename :facepalm:
+    # because attributes in the replay are a mess
+    # and I don't want to go through all the game events.
+    name, extenstion = splitext(basename(replay_path))
+    return name.split(' (')[0]
+
+
 def get_game(replay_path):
     stdout = get_stdout(['--initdata', '--json', replay_path])
     stdout.next()
@@ -67,7 +75,7 @@ def get_game(replay_path):
         did_win=d['m_result'] == 1,
     ) for d in details['m_playerList']]
 
-    return SerializedGame(players)
+    return SerializedGame(players=players, map=get_map(replay_path))
 
 
 if __name__ == '__main__':

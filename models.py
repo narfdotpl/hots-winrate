@@ -9,13 +9,15 @@ class Player:
 
 
 class SerializedGame:
-    def __init__(self, players):
+    def __init__(self, players, map):
         self.players = players
+        self.map = map
 
 
 class Game:
-    def __init__(self, players, owner_name):
+    def __init__(self, players, map, owner_name):
         self.players = players
+        self.map = map
         self.owner = None
 
         for player in players:
@@ -53,6 +55,10 @@ class GameList(list):
     @property
     def by_teammate_hero(self):
         return self.by(get_keys=lambda game: [p.hero for p in game.players if p.team == game.owner.team and p != game.owner])
+
+    @property
+    def by_map(self):
+        return self.by(get_keys=lambda game: [game.map])
 
     @property
     def winrate(self):

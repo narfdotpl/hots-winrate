@@ -1,3 +1,4 @@
+# encoding: utf-8
 class Player:
     def __init__(self, name, hero, team, did_win):
         self.name = name
@@ -29,6 +30,30 @@ class GameList(list):
     def filter(self, predicate):
         return GameList(filter(predicate, self))
 
+    def by(self, get_keys):
+        dct = DictWithGames()
+        for game in self:
+            keys = get_keys(game)
+            for key in keys:
+                if key in dct:
+                    dct[key].append(game)
+                else:
+                    dct[key] = GameList([game])
+
+        return dct
+
+    @property
+    def by_owner_hero(self):
+        return self.by(get_keys=lambda game: [game.owner.hero])
+
+    @property
+    def by_enemy_hero(self):
+        return self.by(get_keys=lambda game: [p.hero for p in game.players if p.team != game.owner.team])
+
+    @property
+    def by_teammate_hero(self):
+        return self.by(get_keys=lambda game: [p.hero for p in game.players if p.team == game.owner.team and p != game.owner])
+
     @property
     def winrate(self):
         wins = self.filter(lambda game: game.owner.did_win)
@@ -36,6 +61,31 @@ class GameList(list):
 
     def __str__(self):
         return str(self.winrate)
+
+
+class DictWithGames(dict):
+    """
+    Type: Dict[str, GameList]
+    """
+
+    def at_least(self, n):
+        return DictWithGames((key, games) for (key, games) in self.items() if len(games) >= n)
+
+    def __str__(self):
+        """
+        Items sorted by descending win rate.
+        """
+
+        lines = []
+        k_wr = [(key, games.winrate) for (key, games) in self.items()]
+        for (key, winrate) in sorted(k_wr, key=lambda t: (-t[1].percentage, t[0])):
+            # TODO: remove encoding hacks
+            if key == u'LÃºcio':
+                key = 'Lucio'
+
+            lines.append("{}: {}".format(key.decode('utf8'), winrate))
+
+        return '\n'.join(lines)
 
 
 class WinRate:

@@ -11,12 +11,27 @@ print "Fenix games:", games.filter(owner.hero("Fenix"))
 print "Fenix games:", games.filter(as_("Fenix"))
 print
 
+fenix_games = games.filter(as_("Fenix"))
+print "Fenix games by teammate:"
+print fenix_games.by_teammate_hero.at_least(3)
+print
+
+print "Fenix games by enemy:"
+print fenix_games.by_enemy_hero.at_least(3)
+print
+
+print "All games by enemy:"
+print games.by_enemy_hero.at_least(5)
+print
+
 print "Fenix + Guldan games:", games.filter(as_("Fenix") & with_("Gul'dan"))
 print "Greymane + Guldan games:", games.filter(as_("Greymane") & with_("Gul'dan"))
 print "Other + Guldan matches:", games.filter(~(as_("Fenix") | as_("Greymane")) & with_("Gul'dan"))
 print
 
 print "Fenix vs Varian:", games.filter(as_("Fenix") & vs("Varian"))
+print "vs Varian:"
+print games.filter(vs("Varian")).by_owner_hero
 print
 
 Filip = teammate.player("jhgrng")

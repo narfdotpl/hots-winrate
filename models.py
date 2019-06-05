@@ -82,14 +82,36 @@ class DictWithGames(dict):
         Items sorted by descending win rate.
         """
 
-        lines = []
+        # store text as rows and columns, so we can fill with spaces and have a nice "table"
+        rows = []
+
         k_wr = [(key, games.winrate) for (key, games) in self.items()]
         for (key, winrate) in sorted(k_wr, key=lambda t: (-t[1].percentage, t[0])):
             # TODO: remove encoding hacks
             if key == u'LÃºcio':
                 key = 'Lucio'
 
-            lines.append("{}: {}".format(key.decode('utf8'), winrate))
+            rows.append([
+                key + ": ", winrate.percentage_text, " (", str(winrate.wins), "/", str(winrate.total), ")"
+            ])
+
+        max_widths = [0] * len(rows[0])
+        for row in rows:
+            widths = map(len, row)
+            max_widths = map(max, zip(widths, max_widths))
+
+        lines = []
+        for row in rows:
+            line = ''
+            for (i, (text, max_width)) in enumerate(zip(row, max_widths)):
+                width = len(text)
+                fill = ' ' * (max_width - width)
+                if i == 0:
+                    line += text + fill
+                else:
+                    line += fill + text
+
+            lines.append(line)
 
         return '\n'.join(lines)
 
@@ -104,8 +126,12 @@ class WinRate:
         else:
             self.percentage = float(wins) / total
 
+    @property
+    def percentage_text(self):
+        return str(int(round(100 * self.percentage))) + "%"
+
     def __str__(self):
-        return '{}% ({}/{})'.format(int(round(100 * self.percentage)), self.wins, self.total)
+        return '{} ({}/{})'.format(self.percentage_text, self.wins, self.total)
 
 
 class Predicate:

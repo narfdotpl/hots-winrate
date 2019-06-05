@@ -55,3 +55,6 @@ print games.by_map
 print
 
 print_synergies(games)
+print
+
+print_counters(games)

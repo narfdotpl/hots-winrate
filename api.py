@@ -50,3 +50,16 @@ def print_synergies(games, at_least=3):
             print "When you play as {} with".format(owner_hero)
             print dct
             print
+
+
+def print_counters(games, at_least=3):
+    print "## Targets / Counters"
+    print
+
+    by_owner = games.by_owner_hero.at_least(at_least)
+    for (owner_hero, games) in sorted(by_owner.items(), key=lambda t: (-t[1].winrate.percentage, t[0])):
+        dct = games.by_enemy_hero.at_least(at_least)
+        if dct:
+            print "When you play as {} vs".format(owner_hero)
+            print dct
+            print

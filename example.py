@@ -52,3 +52,6 @@ print
 
 print "All games by map:"
 print games.by_map
+print
+
+print_synergies(games)

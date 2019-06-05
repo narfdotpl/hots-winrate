@@ -37,3 +37,16 @@ enemy = PlayerPredicate(is_owner_teammate=False)
 as_ = owner.hero
 with_ = teammate.hero
 vs = enemy.hero
+
+
+def print_synergies(games, at_least=3):
+    print "## Synergies"
+    print
+
+    by_owner = games.by_owner_hero.at_least(at_least)
+    for (owner_hero, games) in sorted(by_owner.items(), key=lambda t: (-t[1].winrate.percentage, t[0])):
+        dct = games.by_teammate_hero.at_least(at_least)
+        if dct:
+            print "When you play as {} with".format(owner_hero)
+            print dct
+            print

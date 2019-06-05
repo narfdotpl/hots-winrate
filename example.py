@@ -57,3 +57,10 @@ print
 print_synergies(games)
 print_counters(games)
 print_heroes_by_map(games)
+
+print "By party composition"
+print games.by_party_composition(Filip, Ziom).at_least(3)
+print
+print games.by_party_composition(Filip).at_least(5)
+print
+print games.by_party_composition(Ziom).at_least(5)

@@ -60,6 +60,22 @@ class GameList(list):
     def by_map(self):
         return self.by(get_keys=lambda game: [game.map])
 
+    def by_party_composition(self, *teammates):
+        predicate = teammates[0]
+        for other in teammates[1:]:
+            predicate = predicate & other
+
+        def get_keys(game):
+            segments = []
+            player_names = [game.owner.name] + [tm._name for tm in teammates]
+            for name in player_names:
+                segments += [p.name + ' as ' + p.hero for p in game.players if p.name == name]
+
+            return [', '.join(segments)]
+
+
+        return self.filter(predicate).by(get_keys)
+
     @property
     def winrate(self):
         wins = self.filter(lambda game: game.owner.did_win)

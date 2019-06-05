@@ -58,9 +58,17 @@ print_synergies(games)
 print_counters(games)
 print_heroes_by_map(games)
 
-print "By party composition"
-print games.by_party_composition(Filip, Ziom).at_least(3)
+print "Pairs with Filip:"
+print games.by_pairs(Filip).at_least(5)
 print
-print games.by_party_composition(Filip).at_least(5)
+
+print "Pairs with Ziom:"
+print games.by_pairs(teammate_name="plasticbag").at_least(5)
 print
-print games.by_party_composition(Ziom).at_least(5)
+
+print "Pairs in general:"
+print games.by_pairs().at_least(5)
+print
+
+print "Thrall maps:"
+print games.filter(as_("Thrall")).by_map.at_least(3)

@@ -1,6 +1,12 @@
 # encoding: utf-8
+
+
 class Player:
     def __init__(self, name, hero, team, did_win):
+        # TODO: remove encoding hacks
+        if hero == u'LÃºcio':
+            hero = 'Lucio'
+
         self.name = name
         self.hero = hero
         self.team = team
@@ -60,21 +66,26 @@ class GameList(list):
     def by_map(self):
         return self.by(get_keys=lambda game: [game.map])
 
-    def by_party_composition(self, *teammates):
-        predicate = teammates[0]
-        for other in teammates[1:]:
-            predicate = predicate & other
+    def by_pairs(self, teammate_predicate=None, teammate_name=None):
+        if teammate_name:
+            teammate_predicate = PlayerPredicate(is_owner_teammate=True, name=teammate_name)
+        elif teammate_predicate:
+            teammate_name = teammate_predicate._name
+
+        if teammate_predicate:
+            games = self.filter(teammate_predicate)
+        else:
+            games = self
 
         def get_keys(game):
-            segments = []
-            player_names = [game.owner.name] + [tm._name for tm in teammates]
-            for name in player_names:
-                segments += [p.name + ' as ' + p.hero for p in game.players if p.name == name]
+            teammates = [p for p in game.players if p.team == game.owner.team and p != game.owner]
+            if teammate_name:
+                teammate_hero = [p.hero for p in teammates if p.name == teammate_name][0]
+                return ["{} as {} + {} as {}".format(game.owner.name, game.owner.hero, teammate_name, teammate_hero)]
+            else:
+                return ["{} as {} + {}".format(game.owner.name, game.owner.hero, p.hero) for p in teammates]
 
-            return [', '.join(segments)]
-
-
-        return self.filter(predicate).by(get_keys)
+        return games.by(get_keys)
 
     @property
     def winrate(self):
@@ -103,10 +114,6 @@ class DictWithGames(dict):
 
         k_wr = [(key, games.winrate) for (key, games) in self.items()]
         for (key, winrate) in sorted(k_wr, key=lambda t: (-t[1].percentage, t[0])):
-            # TODO: remove encoding hacks
-            if key == u'LÃºcio':
-                key = 'Lucio'
-
             rows.append([
                 key + ": ", winrate.percentage_text, " (", str(winrate.wins), "/", str(winrate.total), ")"
             ])

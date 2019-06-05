@@ -8,7 +8,8 @@ print "Fenix games:", games.filter(owner.hero("Fenix"))
 print "Fenix games:", games.filter(as_("Fenix"))
 print
 
-print "Fenix games by map:", games.filter(as_("Fenix")).by_map()
+print "Fenix games by map:"
+print games.filter(as_("Fenix")).by_map()
 print
 
 print "Fenix games on Volskaya:", games.filter(as_("Fenix") & map_(maps.volskaya))

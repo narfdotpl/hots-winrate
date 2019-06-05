@@ -50,19 +50,15 @@ class GameList(list):
 
         return dct
 
-    @property
     def by_owner_hero(self):
         return self.by(get_keys=lambda game: [game.owner.hero])
 
-    @property
     def by_enemy_hero(self):
         return self.by(get_keys=lambda game: [p.hero for p in game.players if p.team != game.owner.team])
 
-    @property
     def by_teammate_hero(self):
         return self.by(get_keys=lambda game: [p.hero for p in game.players if p.team == game.owner.team and p != game.owner])
 
-    @property
     def by_map(self):
         return self.by(get_keys=lambda game: [game.map])
 

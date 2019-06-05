@@ -8,7 +8,7 @@ print "Fenix games:", games.filter(owner.hero("Fenix"))
 print "Fenix games:", games.filter(as_("Fenix"))
 print
 
-print "Fenix games by map:", games.filter(as_("Fenix")).by_map
+print "Fenix games by map:", games.filter(as_("Fenix")).by_map()
 print
 
 print "Fenix games on Volskaya:", games.filter(as_("Fenix") & map_(maps.volskaya))
@@ -17,15 +17,15 @@ print
 
 fenix_games = games.filter(as_("Fenix"))
 print "Fenix games by teammate:"
-print fenix_games.by_teammate_hero.at_least(3)
+print fenix_games.by_teammate_hero().at_least(3)
 print
 
 print "Fenix games by enemy:"
-print fenix_games.by_enemy_hero.at_least(3)
+print fenix_games.by_enemy_hero().at_least(3)
 print
 
 print "All games by enemy:"
-print games.by_enemy_hero.at_least(5)
+print games.by_enemy_hero().at_least(5)
 print
 
 print "Fenix + Guldan games:", games.filter(as_("Fenix") & with_("Gul'dan"))
@@ -35,7 +35,7 @@ print
 
 print "Fenix vs Varian:", games.filter(as_("Fenix") & vs("Varian"))
 print "vs Varian:"
-print games.filter(vs("Varian")).by_owner_hero
+print games.filter(vs("Varian")).by_owner_hero()
 print
 
 Filip = teammate.player("jhgrng")
@@ -51,7 +51,7 @@ print "z Ziomem jako Guldanem:", games.filter(Ziom.as_("Gul'dan"))
 print
 
 print "All games by map:"
-print games.by_map
+print games.by_map()
 print
 
 print_synergies(games)
@@ -71,4 +71,4 @@ print games.by_pairs().at_least(5)
 print
 
 print "Thrall maps:"
-print games.filter(as_("Thrall")).by_map.at_least(3)
+print games.filter(as_("Thrall")).by_map().at_least(3)

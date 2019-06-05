@@ -55,6 +55,5 @@ print games.by_map
 print
 
 print_synergies(games)
-print
-
 print_counters(games)
+print_heroes_by_map(games)

@@ -43,7 +43,7 @@ def print_synergies(games, at_least=3):
     print "## Synergies"
     print
 
-    by_owner = games.by_owner_hero.at_least(at_least)
+    by_owner = games.by_owner_hero
     for (owner_hero, games) in sorted(by_owner.items(), key=lambda t: (-t[1].winrate.percentage, t[0])):
         dct = games.by_teammate_hero.at_least(at_least)
         if dct:
@@ -51,15 +51,34 @@ def print_synergies(games, at_least=3):
             print dct
             print
 
+    print
+
 
 def print_counters(games, at_least=3):
     print "## Targets / Counters"
     print
 
-    by_owner = games.by_owner_hero.at_least(at_least)
+    by_owner = games.by_owner_hero
     for (owner_hero, games) in sorted(by_owner.items(), key=lambda t: (-t[1].winrate.percentage, t[0])):
         dct = games.by_enemy_hero.at_least(at_least)
         if dct:
             print "When you play as {} vs".format(owner_hero)
             print dct
             print
+
+    print
+
+
+def print_heroes_by_map(games, at_least=3):
+    print "## Heroes by map"
+    print
+
+    by_map = games.by_map
+    for (map, games) in sorted(by_map.items(), key=lambda t: (-t[1].winrate.percentage, t[0])):
+        dct = games.by_owner_hero.at_least(at_least)
+        if dct:
+            print "When you play on {} as".format(map)
+            print dct
+            print
+
+    print

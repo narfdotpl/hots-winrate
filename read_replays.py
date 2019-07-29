@@ -1,9 +1,11 @@
 from os.path import basename, dirname, exists, join, realpath, splitext
 
+import datetime
 import json
 import multiprocessing
 import os
 import pickle
+import re
 import subprocess
 import sys
 
@@ -50,12 +52,21 @@ def get_replay_paths():
             yield join(replay_dir, name)
 
 
-def get_map(replay_path):
-    # I'm using the name from the filename :facepalm:
+map_re = re.compile(r'(\d{4}-\d{2}-\d{2} \d{2}.\d{2}.\d{2})? ?([\w ]+\w)( \(\d+\))?')
+def get_map_and_datetime(replay_path):
+    # I'm using the name from the filename to get the map name :facepalm:
     # because attributes in the replay are a mess
     # and I don't want to go through all the game events.
-    name, extenstion = splitext(basename(replay_path))
-    return name.split(' (')[0]
+    name = basename(replay_path)
+    match = map_re.match(name)
+    (dt_string, map, index) = match.groups()
+
+    if dt_string:
+        dt = datetime.datetime.strptime(dt_string, '%Y-%m-%d %H.%M.%S')
+    else:
+        dt = None
+
+    return (map, dt)
 
 
 def get_game(replay_path):
@@ -75,7 +86,9 @@ def get_game(replay_path):
         did_win=d['m_result'] == 1,
     ) for d in details['m_playerList']]
 
-    return SerializedGame(players=players, map=get_map(replay_path))
+    (map, started_at) = get_map_and_datetime(replay_path)
+
+    return SerializedGame(players=players, map=map)
 
 
 if __name__ == '__main__':

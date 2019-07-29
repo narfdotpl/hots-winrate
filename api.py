@@ -1,8 +1,9 @@
+import datetime
 import os
 import pickle
 
 from constants import maps
-from models import Game, GameList, OwnerPredicate, PlayerPredicate
+from models import Game, GameList, OwnerPredicate, PlayerPredicate, Predicate
 from read_replays import PICKLED_DATA_PATH
 
 
@@ -37,6 +38,13 @@ enemy = PlayerPredicate(is_owner_teammate=False)
 as_ = owner.hero
 with_ = teammate.hero
 vs = enemy.hero
+
+
+def since(date=None, days=0, weeks=0):
+    if date is None:
+        date = datetime.date.today() - datetime.timedelta(days=days, weeks=weeks)
+
+    return Predicate(lambda game: date <= game.started_at.date())
 
 
 def print_synergies(games, at_least=3):

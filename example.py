@@ -80,4 +80,4 @@ os.system('clear')
 
 from collections import Counter
 import json
-print json.dumps(Counter(g.started_at.date().isoformat() for g in games), indent=4, sort_keys=True)
+print json.dumps(Counter(g.started_at.date().isoformat() for g in games.filter(since(weeks=1, days=7) & as_("Sylvanas"))), indent=4, sort_keys=True)

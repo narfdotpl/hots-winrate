@@ -40,11 +40,24 @@ with_ = teammate.hero
 vs = enemy.hero
 
 
+date = datetime.date
+today = datetime.date.today()
+yesterday = today - datetime.timedelta(days=1)
+
+
+def before(date):
+    return Predicate(lambda game: game.started_at.date() < date)
+
+
+def after(date):
+    return Predicate(lambda game: date < game.started_at.date())
+
+
 def since(date=None, days=0, weeks=0):
     if date is None:
-        date = datetime.date.today() - datetime.timedelta(days=days, weeks=weeks)
+        date = today - datetime.timedelta(days=days, weeks=weeks)
 
-    return Predicate(lambda game: date <= game.started_at.date())
+    return after(date - datetime.timedelta(days=1))
 
 
 def print_synergies(games, at_least=3):

@@ -78,6 +78,4 @@ print games.filter(as_("Thrall")).by_map().at_least(3)
 import os
 os.system('clear')
 
-from collections import Counter
-import json
-print json.dumps(Counter(g.started_at.date().isoformat() for g in games.filter(since(weeks=1, days=7) & as_("Sylvanas"))), indent=4, sort_keys=True)
+print games.filter(before(yesterday))

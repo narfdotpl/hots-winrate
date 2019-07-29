@@ -78,5 +78,6 @@ print games.filter(as_("Thrall")).by_map().at_least(3)
 import os
 os.system('clear')
 
-for map in sorted(set(g.map for g in games)):
-    print map
+from collections import Counter
+import json
+print json.dumps(Counter(g.started_at.date().isoformat() for g in games), indent=4, sort_keys=True)

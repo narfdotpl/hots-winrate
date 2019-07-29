@@ -22,7 +22,7 @@ Run this command every time you play new games.
     with open(path, 'rb') as f:
         serialized_games = pickle.load(f)
 
-    return GameList(Game(g.players, g.map, owner) for g in serialized_games)
+    return GameList(Game(g.players, g.map, g.started_at, owner) for g in serialized_games)
 
 
 def map_(map):

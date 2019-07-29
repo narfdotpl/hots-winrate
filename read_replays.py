@@ -69,6 +69,10 @@ def get_map_and_datetime(replay_path):
     return (map, dt)
 
 
+def get_creation_time(replay_path):
+    return datetime.datetime.fromtimestamp(os.path.getctime(replay_path))
+
+
 def get_game(replay_path):
     stdout = get_stdout(['--initdata', '--json', replay_path])
     stdout.next()
@@ -87,8 +91,10 @@ def get_game(replay_path):
     ) for d in details['m_playerList']]
 
     (map, started_at) = get_map_and_datetime(replay_path)
+    if started_at is None:
+        started_at = get_creation_time(replay_path)
 
-    return SerializedGame(players=players, map=map)
+    return SerializedGame(players=players, map=map, started_at=started_at)
 
 
 if __name__ == '__main__':

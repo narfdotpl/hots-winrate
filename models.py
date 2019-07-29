@@ -15,15 +15,17 @@ class Player:
 
 
 class SerializedGame:
-    def __init__(self, players, map):
+    def __init__(self, players, map, started_at):
         self.players = players
         self.map = map
+        self.started_at = started_at
 
 
 class Game:
-    def __init__(self, players, map, owner_name):
+    def __init__(self, players, map, started_at, owner_name):
         self.players = players
         self.map = map
+        self.started_at = started_at
         self.owner = None
 
         for player in players:

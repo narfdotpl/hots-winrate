@@ -105,6 +105,9 @@ class DictWithGames(dict):
         Items sorted by descending win rate.
         """
 
+        if not self:
+            return ''
+
         # store text as rows and columns, so we can fill with spaces and have a nice "table"
         rows = []
 

@@ -7,7 +7,7 @@ from models import Game, GameList, OwnerPredicate, PlayerPredicate, Predicate
 from read_replays import PICKLED_DATA_PATH
 
 
-def load_games(owner, path=PICKLED_DATA_PATH):
+def load_games(owner, path=PICKLED_DATA_PATH, verbose=True):
     if not os.path.exists(path):
         print """
 Couldn't find data file: {}
@@ -23,7 +23,14 @@ Run this command every time you play new games.
     with open(path, 'rb') as f:
         serialized_games = pickle.load(f)
 
-    return GameList(Game(g.players, g.map, g.started_at, owner) for g in serialized_games)
+    has_owner = lambda game: any(player.name == owner for player in game.players)
+    filtered = filter(has_owner, serialized_games)
+    games = GameList(Game(g.players, g.map, g.started_at, owner) for g in filtered)
+
+    if verbose:
+        print "Loaded {} Storm League games with owner {}.\n".format(len(games), owner)
+
+    return games
 
 
 def map_(map):

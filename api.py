@@ -110,3 +110,18 @@ def print_heroes_by_map(games, at_least=3):
             print
 
     print
+
+
+def print_days_of_the_week(games):
+    print "## Win rate by day of the week\n"
+
+    day_names = ['Monday', 'Tuesday', 'Wednesday', 'Thursday', 'Friday', 'Saturday', 'Sunday']
+    get_week_day = lambda game: game.started_at.date().weekday()
+    print games.by(lambda g: [day_names[get_week_day(g)]]).sorted_by_keys(day_names)
+    print
+
+    is_weekend = lambda n: n >= 5
+    names = ['work day', 'weekend']
+    to_name = lambda n: names[int(is_weekend(n))]
+    print games.by(lambda game: [to_name(get_week_day(game))]).sorted_by_keys(names)
+    print

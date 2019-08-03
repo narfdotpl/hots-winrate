@@ -77,5 +77,4 @@ print games.filter(as_("Thrall")).by_map().at_least(3)
 
 import os
 os.system('clear')
-
-print games.filter(before(yesterday))
+print_days_of_the_week(games)

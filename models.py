@@ -99,14 +99,25 @@ class DictWithGames(dict):
     Type: Dict[str, GameList]
     """
 
+    SORTING_KEY_ATTRIBUTE = 'sorting_key'
+
     def at_least(self, n):
         return DictWithGames((key, games) for (key, games) in self.items() if len(games) >= n)
 
-    def __str__(self):
-        """
-        Items sorted by descending win rate.
-        """
+    def get_sorting_key(self):
+        # sort by descending winrate by default
+        # t = (key, winrate)
+        default_key = lambda t: (-t[1].percentage, t[0])
+        return getattr(self, self.SORTING_KEY_ATTRIBUTE, default_key)
 
+    def sorted_by(self, key):
+        setattr(self, self.SORTING_KEY_ATTRIBUTE, key)
+        return self
+
+    def sorted_by_keys(self, keys):
+        return self.sorted_by(key=lambda t: keys.index(t[0]))
+
+    def __str__(self):
         if not self:
             return ''
 
@@ -114,7 +125,7 @@ class DictWithGames(dict):
         rows = []
 
         k_wr = [(key, games.winrate) for (key, games) in self.items()]
-        for (key, winrate) in sorted(k_wr, key=lambda t: (-t[1].percentage, t[0])):
+        for (key, winrate) in sorted(k_wr, key=self.get_sorting_key()):
             rows.append([
                 key + ": ", winrate.percentage_text, " (", str(winrate.wins), "/", str(winrate.total), ")"
             ])

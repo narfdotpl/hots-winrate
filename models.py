@@ -148,7 +148,7 @@ class DictWithGames(dict):
 
             lines.append(line)
 
-        return '\n'.join(lines)
+        return '\n'.join(lines) + '\n'
 
 
 class WinRate:

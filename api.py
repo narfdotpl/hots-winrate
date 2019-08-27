@@ -77,7 +77,6 @@ def print_synergies(games, at_least=3):
         if dct:
             print "When you play as {} with".format(owner_hero)
             print dct
-            print
 
     print
 
@@ -92,7 +91,6 @@ def print_counters(games, at_least=3):
         if dct:
             print "When you play as {} vs".format(owner_hero)
             print dct
-            print
 
     print
 
@@ -107,7 +105,6 @@ def print_heroes_by_map(games, at_least=3):
         if dct:
             print "When you play on {} as".format(map)
             print dct
-            print
 
     print
 
@@ -118,10 +115,8 @@ def print_days_of_the_week(games):
     day_names = ['Monday', 'Tuesday', 'Wednesday', 'Thursday', 'Friday', 'Saturday', 'Sunday']
     get_week_day = lambda game: game.started_at.date().weekday()
     print games.by(lambda g: [day_names[get_week_day(g)]]).sorted_by_keys(day_names)
-    print
 
     is_weekend = lambda n: n >= 5
     names = ['work day', 'weekend']
     to_name = lambda n: names[int(is_weekend(n))]
     print games.by(lambda game: [to_name(get_week_day(game))]).sorted_by_keys(names)
-    print

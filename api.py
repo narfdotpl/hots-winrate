@@ -3,7 +3,7 @@ import os
 import pickle
 
 from constants import maps
-from models import Game, GameList, OwnerPredicate, PlayerPredicate, Predicate
+from models import Game, GameList, OwnerPredicate, PlayerPredicate, Predicate, align_rows
 from read_replays import PICKLED_DATA_PATH
 
 
@@ -120,3 +120,43 @@ def print_days_of_the_week(games):
     names = ['work day', 'weekend']
     to_name = lambda n: names[int(is_weekend(n))]
     print games.by(lambda game: [to_name(get_week_day(game))]).sorted_by_keys(names)
+    print
+
+
+def print_week_by_week(games, start_date=date(2019, 7, 15), end_date=today):
+    print "## Win rate week by week\n"
+
+    rows = []
+
+    diff_total = 0
+    week = datetime.timedelta(days=7)
+    date = start_date
+
+    while date <= end_date:
+        period_games = games.filter(since(date) & before(date + week))
+
+        wr = period_games.winrate
+        diff = wr.wins - wr.loses
+        diff_total += diff
+
+        rows.append(map(str, [
+            date.isoformat(),
+            ": ",
+
+            "-" if diff < 0 else (" " if diff == 0 else "+"),
+            abs(diff),
+            ", ",
+
+            wr.percentage_text,
+            " (",
+            wr.wins,
+            "/",
+            wr.total,
+            ") ",
+
+            "-" * abs(diff_total) if diff_total < 0 else "",
+            "+" * diff_total if diff_total > 0 else "",
+        ]))
+        date += week
+
+    print align_rows(rows, is_column_left_aligned=lambda i: i == 0 or i == len(rows[0]) - 1)

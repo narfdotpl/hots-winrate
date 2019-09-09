@@ -130,25 +130,29 @@ class DictWithGames(dict):
                 key + ": ", winrate.percentage_text, " (", str(winrate.wins), "/", str(winrate.total), ")"
             ])
 
-        max_widths = [0] * len(rows[0])
-        for row in rows:
-            widths = map(len, row)
-            max_widths = map(max, zip(widths, max_widths))
+        return align_rows(rows)
 
-        lines = []
-        for row in rows:
-            line = ''
-            for (i, (text, max_width)) in enumerate(zip(row, max_widths)):
-                width = len(text)
-                fill = ' ' * (max_width - width)
-                if i == 0:
-                    line += text + fill
-                else:
-                    line += fill + text
 
-            lines.append(line)
+def align_rows(rows, is_column_left_aligned=lambda i: i == 0):
+    max_widths = [0] * len(rows[0])
+    for row in rows:
+        widths = map(len, row)
+        max_widths = map(max, zip(widths, max_widths))
 
-        return '\n'.join(lines) + '\n'
+    lines = []
+    for row in rows:
+        line = ''
+        for (i, (text, max_width)) in enumerate(zip(row, max_widths)):
+            width = len(text)
+            fill = ' ' * (max_width - width)
+            if is_column_left_aligned(i):
+                line += text + fill
+            else:
+                line += fill + text
+
+        lines.append(line)
+
+    return '\n'.join(lines) + '\n'
 
 
 class WinRate:
@@ -164,6 +168,10 @@ class WinRate:
     @property
     def percentage_text(self):
         return str(int(round(100 * self.percentage))) + "%"
+
+    @property
+    def loses(self):
+        return self.total - self.wins
 
     def __str__(self):
         return '{} ({}/{})'.format(self.percentage_text, self.wins, self.total)

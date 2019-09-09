@@ -1,7 +1,7 @@
 from api import *
 
 
-games = load_games(owner="narf").filter(as_("Sylvanas"))
+games = load_games(owner="narf")#.filter(as_("Sylvanas"))
 
 print '## Overall Sylvanas winrate\n'
 print games
@@ -21,3 +21,4 @@ print games.by_pairs(teammate_name="plasticbag").at_least(5)
 print
 
 print_days_of_the_week(games)
+print_week_by_week(games)

@@ -85,6 +85,11 @@ class GameList(list):
 
         return games.by(get_keys)
 
+    def by_hour(self):
+        to_key = lambda hour: str(hour).zfill(2) + ":00"
+        keys = map(to_key, list(range(6, 24)) + list(range(0, 6)))
+        return self.by(get_keys=lambda game: [to_key(game.started_at.hour)]).sorted_by_keys(keys)
+
     @property
     def winrate(self):
         wins = self.filter(lambda game: game.owner.did_win)

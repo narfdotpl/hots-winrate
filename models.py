@@ -131,9 +131,18 @@ class DictWithGames(dict):
 
         k_wr = [(key, games.winrate) for (key, games) in self.items()]
         for (key, winrate) in sorted(k_wr, key=self.get_sorting_key()):
-            rows.append([
-                key + ": ", winrate.percentage_text, " (", str(winrate.wins), "/", str(winrate.total), ")"
-            ])
+            rows.append(map(str, [
+                key + ": ",
+                winrate.percentage_text,
+                " (",
+                winrate.wins,
+                "/",
+                winrate.total,
+                ") (",
+                winrate.diff_sign,
+                abs(winrate.diff),
+                ")",
+            ]))
 
         return align_rows(rows)
 
@@ -178,8 +187,22 @@ class WinRate:
     def loses(self):
         return self.total - self.wins
 
+    @property
+    def diff(self):
+        return self.wins - self.loses
+
+    @property
+    def diff_sign(self):
+        diff = self.diff
+        if diff < 0:
+            return "-"
+        elif diff == 0:
+            return ""
+        else:
+            return "+"
+
     def __str__(self):
-        return '{} ({}/{})'.format(self.percentage_text, self.wins, self.total)
+        return '{} ({}/{}) ({}{})'.format(self.percentage_text, self.wins, self.total, self.diff_sign, abs(self.diff))
 
 
 class Predicate:

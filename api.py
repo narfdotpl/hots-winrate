@@ -136,15 +136,14 @@ def print_week_by_week(games, start_date=date(2019, 7, 15), end_date=today):
         period_games = games.filter(since(date) & before(date + week))
 
         wr = period_games.winrate
-        diff = wr.wins - wr.loses
-        diff_total += diff
+        diff_total += wr.diff
 
         rows.append(map(str, [
             date.isoformat(),
             ": ",
 
-            "-" if diff < 0 else (" " if diff == 0 else "+"),
-            abs(diff),
+            wr.diff_sign,
+            abs(wr.diff),
             ", ",
 
             wr.percentage_text,

@@ -20,12 +20,45 @@ print '## Maps\n'
 print games.by_map().at_least(at_least)
 print
 
-print '## Pairs\n'
-for name in ["plasticbag", "jhgrng", "barcode", "Tuddels"]:
-    s = str(since_back_to_SL.by_pairs(teammate_name=name).at_least(5))
-    if s:
-        print s
+print_days_of_the_week(since_back_to_SL)
+
+print "## Just after work\n"
+
+def after_work(game):
+    dt = game.started_at
+    is_workday = dt.date().weekday() < 5
+    time = (dt.hour, dt.minute)
+    return is_workday and (16, 45) <= time <= (17, 45)
+
+print since_back_to_SL.filter(after_work)
+print
 print
 
-print_days_of_the_week(since_back_to_SL)
-print_week_by_week(all_games)
+filip = teammate.player("jhgrng") | teammate.player("barcode")
+ziom = teammate.player("plasticbag")
+thax = teammate.player("Thax")
+dekusss = teammate.player("dekusss")
+solo = ~filip & ~ziom & ~thax & ~dekusss
+
+print_week_by_week(all_games)#.filter(solo))
+print
+
+print '## Sylvanas party\n'
+
+
+def get_party_keys(game):
+    for (key, predicate) in [
+        ('Filip', filip & ~ziom),
+        ('Filip+', filip),
+        ('Filip, Ziom', filip & ziom),
+        ('Ziom', ziom & ~filip),
+        ('Ziom+', ziom),
+        ('Thax+', thax),
+        ('dekusss+', dekusss),
+        ('Solo', solo),
+    ]:
+        if predicate(game):
+            yield key
+
+season1 = date(2019, 8, 6)
+print all_games.filter(since(season1) & as_("Sylvanas")).by(get_keys=get_party_keys)

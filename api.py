@@ -21,10 +21,10 @@ Run this command every time you play new games.
         exit(1)
 
     with open(path, 'rb') as f:
-        serialized_games = pickle.load(f)
+        data = pickle.load(f)
 
     has_owner = lambda game: any(player.name == owner for player in game.players)
-    filtered = filter(has_owner, serialized_games)
+    filtered = filter(has_owner, data.games)
     games = GameList(Game(g.players, g.map, g.started_at, owner) for g in filtered)
 
     if verbose:

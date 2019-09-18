@@ -24,6 +24,12 @@ class SerializedGame:
         self.started_at = started_at
 
 
+class SerializedData:
+    def __init__(self, paths=None, games=None):
+        self.paths = paths or set()
+        self.games = games or list()
+
+
 class Game:
     def __init__(self, players, map, started_at, owner_name):
         self.players = players

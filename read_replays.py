@@ -10,7 +10,7 @@ import subprocess
 import sys
 
 from constants import game_modes
-from models import Player, SerializedGame
+from models import Player, SerializedData, SerializedGame
 
 
 CURRENT_DIR = dirname(realpath(__file__))
@@ -100,7 +100,22 @@ def get_game(replay_path):
 if __name__ == '__main__':
     # process replays in parallel
     with multiprocessing.Manager() as manager:
+        # load old games first
+        path = PICKLED_DATA_PATH
+        if os.path.exists(path):
+            with open(path, 'rb') as f:
+                data = pickle.load(f)
+        else:
+            data = SerializedData()
+
         games = manager.list()
+
+        # only add games with new paths
+        old_paths = data.paths
+        all_paths = set(get_replay_paths())
+        new_paths = all_paths - old_paths
+        if not new_paths:
+            exit(0)
 
         def append_game(path):
             print path
@@ -109,10 +124,13 @@ if __name__ == '__main__':
                 games.append(game)
 
         pool = multiprocessing.Pool(multiprocessing.cpu_count())
-        pool.map(append_game, sorted(get_replay_paths()))
+        pool.map(append_game, sorted(new_paths))
         pool.terminate()
+
+        data.paths = all_paths
+        data.games += games
 
         path = PICKLED_DATA_PATH
         with open(path, 'wb') as f:
-            pickle.dump(list(games), f)
+            pickle.dump(data, f)
             print 'Saved data to', path

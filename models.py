@@ -1,6 +1,9 @@
 # encoding: utf-8
 
 
+AVERAGE_KEY = 'AVERAGE'
+
+
 class Player:
     def __init__(self, name, hero, team, did_win):
         # TODO: remove encoding hacks
@@ -40,7 +43,7 @@ class GameList(list):
     def filter(self, predicate):
         return GameList(filter(predicate, self))
 
-    def by(self, get_keys):
+    def by(self, get_keys, including_average=False):
         dct = DictWithGames()
         for game in self:
             keys = get_keys(game)
@@ -50,19 +53,25 @@ class GameList(list):
                 else:
                     dct[key] = GameList([game])
 
+        if dct and including_average:
+            dct[AVERAGE_KEY] = self
+
         return dct
 
     def by_owner_hero(self):
         return self.by(get_keys=lambda game: [game.owner.hero])
 
     def by_enemy_hero(self):
-        return self.by(get_keys=lambda game: [p.hero for p in game.players if p.team != game.owner.team])
+        return self.by(get_keys=lambda game: [p.hero for p in game.players if p.team != game.owner.team],
+                       including_average=True)
 
     def by_teammate_hero(self):
-        return self.by(get_keys=lambda game: [p.hero for p in game.players if p.team == game.owner.team and p != game.owner])
+        return self.by(get_keys=lambda game: [p.hero for p in game.players if p.team == game.owner.team and p != game.owner],
+                       including_average=True)
 
     def by_map(self):
-        return self.by(get_keys=lambda game: [game.map])
+        return self.by(get_keys=lambda game: [game.map],
+                       including_average=True)
 
     def by_pairs(self, teammate_predicate=None, teammate_name=None):
         if teammate_name:
@@ -130,9 +139,11 @@ class DictWithGames(dict):
         rows = []
 
         k_wr = [(key, games.winrate) for (key, games) in self.items()]
+        display_key_for_average = '-' * (1 + max(len(k) for (k, wr) in k_wr if k != AVERAGE_KEY))
+
         for (key, winrate) in sorted(k_wr, key=self.get_sorting_key()):
             rows.append(map(str, [
-                key + ": ",
+                display_key_for_average if key == AVERAGE_KEY else key + ": ",
                 winrate.percentage_text,
                 " (",
                 winrate.wins,

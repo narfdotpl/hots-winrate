@@ -3,6 +3,7 @@ from api import *
 
 all_games = load_games(owner="narf")
 back_to_SL = date(2019, 7, 15)
+season1 = date(2019, 8, 6)
 since_back_to_SL = all_games.filter(since(back_to_SL))
 
 games = all_games.filter(as_("Sylvanas"))
@@ -60,5 +61,4 @@ def get_party_keys(game):
         if predicate(game):
             yield key
 
-season1 = date(2019, 8, 6)
 print all_games.filter(since(season1) & as_("Sylvanas")).by(get_keys=get_party_keys)

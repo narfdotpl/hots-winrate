@@ -35,29 +35,23 @@ print since_back_to_SL.filter(after_work)
 print
 print
 
-filip = teammate.player("jhgrng") | teammate.player("barcode")
-ziom = teammate.player("plasticbag")
-thax = teammate.player("Thax")
-dekusss = teammate.player("dekusss")
-solo = ~filip & ~ziom & ~thax & ~dekusss
-
-print_week_by_week(all_games)#.filter(solo))
+print_week_by_week(all_games)
 print
 
 print '## Sylvanas party\n'
 
-
 def get_party_keys(game):
-    for (key, predicate) in [
-        ('Filip', filip & ~ziom),
-        ('Filip+', filip),
-        ('Filip, Ziom', filip & ziom),
-        ('Ziom', ziom & ~filip),
-        ('Ziom+', ziom),
-        ('Thax+', thax),
-        ('dekusss+', dekusss),
-        ('Solo', solo),
-    ]:
+    names = [
+        "jhgrng", "barcode",
+        "plasticbag", "plasticbox",
+        "dekusss",
+        "Thax",
+        "Tuddels", "Vesetoth",
+    ]
+    predicates = map(teammate.player, names)
+    solo = reduce((lambda p1, p2: p1 & ~p2), predicates, Predicate(lambda _: True))
+
+    for (key, predicate) in zip(names, predicates) + [("solo", solo)]:
         if predicate(game):
             yield key
 

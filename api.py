@@ -99,7 +99,7 @@ def print_heroes_by_map(games, at_least=3):
     print "## Heroes by map"
     print
 
-    by_map = games.by_map()
+    by_map = games.by_map(including_average=False)
     for (map, games) in sorted(by_map.items(), key=lambda t: (-t[1].winrate.percentage, t[0])):
         dct = games.by_owner_hero().at_least(at_least)
         if dct:

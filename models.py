@@ -75,9 +75,9 @@ class GameList(list):
         return self.by(get_keys=lambda game: [p.hero for p in game.players if p.team == game.owner.team and p != game.owner],
                        including_average=True)
 
-    def by_map(self):
+    def by_map(self, including_average=True):
         return self.by(get_keys=lambda game: [game.map],
-                       including_average=True)
+                       including_average=including_average)
 
     def by_pairs(self, teammate_predicate=None, teammate_name=None):
         if teammate_name:
@@ -136,6 +136,13 @@ class DictWithGames(dict):
 
     def sorted_by_keys(self, keys):
         return self.sorted_by(key=lambda t: keys.index(t[0]))
+
+    def __nonzero__(self):
+        keys = self.keys()
+        if keys == [] or keys == [AVERAGE_KEY]:
+            return False
+        else:
+            return True
 
     def __str__(self):
         if not self:

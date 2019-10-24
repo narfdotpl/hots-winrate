@@ -105,6 +105,22 @@ class GameList(list):
         keys = map(to_key, list(range(6, 24)) + list(range(0, 6)))
         return self.by(get_keys=lambda game: [to_key(game.started_at.hour)]).sorted_by_keys(keys)
 
+    def by_friends(self, names, including_solo=True):
+        def get_keys(game):
+            teammate = PlayerPredicate(is_owner_teammate=True)
+            predicates = map(teammate.player, names)
+            solo = reduce((lambda p1, p2: p1 & ~p2), predicates, Predicate(lambda _: True))
+
+            k_p = zip(names, predicates)
+            if including_solo:
+                k_p += [("solo", solo)]
+
+            for (key, predicate) in k_p:
+                if predicate(game):
+                    yield key
+
+        return self.by(get_keys, including_average=True)
+
     @property
     def winrate(self):
         wins = self.filter(lambda game: game.owner.did_win)

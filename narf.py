@@ -40,19 +40,10 @@ print
 
 print '## Sylvanas party\n'
 
-def get_party_keys(game):
-    names = [
-        "jhgrng", "barcode",
-        "plasticbag", "plasticbox",
-        "dekusss",
-        "Thax",
-        "Tuddels", "Vesetoth",
-    ]
-    predicates = map(teammate.player, names)
-    solo = reduce((lambda p1, p2: p1 & ~p2), predicates, Predicate(lambda _: True))
-
-    for (key, predicate) in zip(names, predicates) + [("solo", solo)]:
-        if predicate(game):
-            yield key
-
-print all_games.filter(since(season1) & as_("Sylvanas")).by(get_keys=get_party_keys)
+print all_games.filter(since(season1) & as_("Sylvanas")).by_friends([
+    "jhgrng", "barcode",
+    "plasticbag", "plasticbox",
+    "dekusss",
+    "Thax",
+    "Tuddels", "Vesetoth",
+])

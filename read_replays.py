@@ -141,6 +141,9 @@ if __name__ == '__main__':
 
         data.games += filter(None, map(print_and_get_game, sorted(new_paths)))
 
+    # keep order
+    data.games = sorted(data.games, key=lambda g: g.started_at)
+
     # save
     with open(path, 'wb') as f:
         pickle.dump(data, f)

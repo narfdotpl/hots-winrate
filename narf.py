@@ -38,8 +38,13 @@ print
 print_week_by_week(all_games)
 print
 
-print '## Sylvanas party\n'
+print '## Last games\n'
+for n in [10, 20, 30, 40, 50]:
+    print 'last', n, 'games:', GameList(all_games[-n:])
+print
+print
 
+print '## Sylvanas party\n'
 print all_games.filter(since(season1) & as_("Sylvanas")).by_friends([
     "jhgrng", "barcode",
     "plasticbag", "plasticbox",

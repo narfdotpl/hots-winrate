@@ -5,6 +5,7 @@ import json
 import multiprocessing
 import os
 import pickle
+import platform
 import re
 import subprocess
 import sys
@@ -98,39 +99,49 @@ def get_game(replay_path):
 
 
 if __name__ == '__main__':
-    # process replays in parallel
-    with multiprocessing.Manager() as manager:
-        # load old games first
-        path = PICKLED_DATA_PATH
-        if os.path.exists(path):
-            with open(path, 'rb') as f:
-                data = pickle.load(f)
-        else:
-            data = SerializedData()
+    # load old games first
+    path = PICKLED_DATA_PATH
+    if os.path.exists(path):
+        with open(path, 'rb') as f:
+            data = pickle.load(f)
+    else:
+        data = SerializedData()
 
-        games = manager.list()
+    # only add games with new paths
+    old_paths = data.paths
+    all_paths = set(get_replay_paths())
+    new_paths = all_paths - old_paths
+    if not new_paths:
+        exit(0)
 
-        # only add games with new paths
-        old_paths = data.paths
-        all_paths = set(get_replay_paths())
-        new_paths = all_paths - old_paths
-        if not new_paths:
-            exit(0)
+    data.paths = all_paths
 
-        def append_game(path):
+    # process replays in parallel, but only on macOS
+    is_macOS = platform.system() == 'Darwin'
+    is_parallel = is_macOS
+    if is_parallel:
+        with multiprocessing.Manager() as manager:
+            games = manager.list()
+
+            def append_game(path):
+                print path
+                game = get_game(path)
+                if game:
+                    games.append(game)
+
+            pool = multiprocessing.Pool(multiprocessing.cpu_count())
+            pool.map(append_game, sorted(new_paths))
+            pool.terminate()
+
+            data.games += games
+    else:
+        def print_and_get_game(path):
             print path
-            game = get_game(path)
-            if game:
-                games.append(game)
+            return get_game(path)
 
-        pool = multiprocessing.Pool(multiprocessing.cpu_count())
-        pool.map(append_game, sorted(new_paths))
-        pool.terminate()
+        data.games += filter(None, map(print_and_get_game, sorted(new_paths)))
 
-        data.paths = all_paths
-        data.games += games
-
-        path = PICKLED_DATA_PATH
-        with open(path, 'wb') as f:
-            pickle.dump(data, f)
-            print 'Saved data to', path
+    # save
+    with open(path, 'wb') as f:
+        pickle.dump(data, f)
+        print 'Saved data to', path

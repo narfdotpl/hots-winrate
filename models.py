@@ -44,6 +44,10 @@ class Game:
         else:  # no break
             raise ValueError('Couldn\'t find player called "{}".'.format(owner_name))
 
+    @property
+    def teammates(self):
+        return [p for p in self.players if p.team == self.owner.team and p != self.owner]
+
 
 class GameList(list):
     def filter(self, predicate):
@@ -91,7 +95,7 @@ class GameList(list):
             games = self
 
         def get_keys(game):
-            teammates = [p for p in game.players if p.team == game.owner.team and p != game.owner]
+            teammates = game.teammates
             if teammate_name:
                 teammate_hero = [p.hero for p in teammates if p.name == teammate_name][0]
                 return ["{} as {} + {} as {}".format(game.owner.name, game.owner.hero, teammate_name, teammate_hero)]

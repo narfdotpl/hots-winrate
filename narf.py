@@ -54,3 +54,11 @@ print all_games.filter(since(season1) & as_("Sylvanas")).by_friends([
     "Snaps", "leroilyche", "RisingSun",
     "Mike", "TempoKev", "kindaleek", "Chuppy", "NoctisRex",
 ]).at_least(5)
+print
+
+
+if not True:
+    print '## Recent teammates\n'
+    n = 1
+    for name in sorted(set(p.name for g in all_games[-n:] for p in g.teammates)):
+        print '-', name

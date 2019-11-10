@@ -44,6 +44,9 @@ for n in [10, 20, 30, 40, 50]:
 print
 print
 
+print_streaks(all_games)
+print
+
 print '## Sylvanas party\n'
 print all_games.filter(since(season1) & as_("Sylvanas")).by_friends([
     "jhgrng", "barcode",

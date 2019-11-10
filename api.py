@@ -159,3 +159,32 @@ def print_week_by_week(games, start_date=date(2019, 7, 15), end_date=today):
         date += week
 
     print align_rows(rows, is_column_left_aligned=lambda i: i == 0 or i == len(rows[0]) - 1)
+
+
+def get_streaks(games):
+    current_W = current_L = max_W = max_L = 0
+
+    for game in games:
+        if game.owner.did_win:
+            current_W += 1
+            current_L = 0
+            max_W = max([max_W, current_W])
+        else:
+            current_L += 1
+            current_W = 0
+            max_L = max([max_L, current_L])
+
+    return (max_W, max_L)
+
+
+def print_streaks(games):
+    print '## Longest winning, losing streaks\n'
+
+    key_games = [('overall', games)] + list(games.by_owner_hero().items())
+    key_streaks = [(key, get_streaks(games)) for (key, games) in key_games]
+    key_streaks = list(reversed(sorted(key_streaks, key=lambda t: t[1])))
+
+    print align_rows([
+        map(str, ['{}: '.format(key), wins, ', ', losses]) for (key, (wins, losses)) in key_streaks
+        if wins > 1 or losses > 1
+    ])

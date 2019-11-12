@@ -177,7 +177,7 @@ def get_streaks(games):
     return (max_W, max_L)
 
 
-def print_streaks(games):
+def print_streaks(games, at_least=2):
     print '## Longest winning, losing streaks\n'
 
     key_games = [('overall', games)] + list(games.by_owner_hero().items())
@@ -186,5 +186,5 @@ def print_streaks(games):
 
     print align_rows([
         map(str, ['{}: '.format(key), wins, ', ', losses]) for (key, (wins, losses)) in key_streaks
-        if wins > 1 or losses > 1
+        if wins >= at_least or losses >= at_least
     ])

@@ -44,7 +44,7 @@ for n in [10, 20, 30, 40, 50]:
 print
 print
 
-print_streaks(all_games)
+print_streaks(all_games, at_least=4)
 print
 
 print '## Sylvanas party\n'

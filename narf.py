@@ -56,6 +56,7 @@ print all_games.filter(since(season1) & as_("Sylvanas")).by_friends([
     "Tuddels", "Vesetoth",
     "Snaps", "leroilyche", "RisingSun", "DNCMadhox", "Grabbax",
     "Mike", "TempoKev", "kindaleek", "Chuppy", "NoctisRex",
+    "Mekaku", "Lived", "NadrkaniLer", "Deaddam5",
 ]).at_least(5)
 print
 

@@ -47,8 +47,8 @@ print
 print_streaks(all_games, at_least=4)
 print
 
-print '## Sylvanas party\n'
-print all_games.filter(since(season1) & as_("Sylvanas")).by_friends([
+print '## Party\n'
+print all_games.filter(since(season1)).by_friends([
     "jhgrng", "barcode",
     "plasticbag", "plasticbox",
     "dekusss",

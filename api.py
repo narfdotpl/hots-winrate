@@ -182,7 +182,8 @@ def print_streaks(games, at_least=2):
 
     key_games = [('overall', games)] + list(games.by_owner_hero().items())
     key_streaks = [(key, get_streaks(games)) for (key, games) in key_games]
-    key_streaks = list(reversed(sorted(key_streaks, key=lambda t: t[1])))
+    win_desc_loss_asc = lambda t: (-t[1][0], t[1][1])
+    key_streaks = list(sorted(key_streaks, key=win_desc_loss_asc))
 
     print align_rows([
         map(str, ['{}: '.format(key), wins, ', ', losses]) for (key, (wins, losses)) in key_streaks

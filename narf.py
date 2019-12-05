@@ -4,6 +4,7 @@ from api import *
 all_games = load_games(owner="narf")
 back_to_SL = date(2019, 7, 15)
 season1 = date(2019, 8, 6)
+season2 = date(2019, 12, 5)
 since_back_to_SL = all_games.filter(since(back_to_SL))
 
 games = all_games.filter(as_("Sylvanas"))
@@ -48,7 +49,7 @@ print_streaks(all_games, at_least=4)
 print
 
 print '## Party\n'
-print all_games.filter(since(season1)).by_friends([
+print all_games.filter(since(season2)).by_friends([
     "jhgrng", "barcode",
     "plasticbag", "plasticbox",
     "dekusss",

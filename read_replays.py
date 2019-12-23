@@ -7,10 +7,12 @@ import os
 import pickle
 import platform
 import re
+import struct
 import subprocess
 import sys
 
 from constants import game_modes
+from heroprotocol.mpyq import mpyq
 from models import Player, SerializedData, SerializedGame
 
 
@@ -74,6 +76,38 @@ def get_creation_time(replay_path):
     return datetime.datetime.fromtimestamp(os.path.getctime(replay_path))
 
 
+def get_party(lobby, player_name):
+    """
+    `lobby` is a binary string. @healingbrew and @MGatner told me
+    [on GitHub](https://github.com/Blizzard/heroprotocol/issues/83)
+    that party identifier is optional and is always before player's tag:
+
+        {bool: is in a party}{int64: optional party identifier}?{bool: undocumented}{battle tag}
+
+    which in bytes is
+
+        {1}{8}?{1}
+
+    I'm reading it backwards, not forwards (I don't know where bytes start,
+    I know where they end, because of the tag), so I might be incorrect
+    because party ID bytes are optional. I try my best to check if results
+    fit the expected pattern. I think it's unlikely that I will erronously
+    assign a player to a party that other player is in: false positive will
+    most likely put a player in a party of one.
+    """
+
+    tag_prefix = (player_name + '#').encode('utf8')
+    before_tag = lobby.split(tag_prefix)[0]
+    bytes_ = before_tag[-10:-1]
+
+    in_a_party = struct.unpack('>?', bytes_[0])[0]
+    if in_a_party:
+        party_id = struct.unpack('>q', bytes_[1:])[0]
+        return party_id
+    else:
+        return None
+
+
 def get_game(replay_path):
     stdout = get_stdout(['--initdata', '--json', replay_path])
     stdout.next()
@@ -82,12 +116,15 @@ def get_game(replay_path):
     if game_mode != game_modes.storm_league:
         return None
 
+    archive = mpyq.MPQArchive(replay_path)
+    lobby = archive.read_file('replay.server.battlelobby')
     stdout = get_stdout(['--details', '--json', replay_path])
     details = json.loads(stdout.next())
     players = [Player(
         name=d['m_name'],
         hero=d['m_hero'],
         team=d['m_teamId'],
+        party=get_party(lobby, d['m_name']),
         did_win=d['m_result'] == 1,
     ) for d in details['m_playerList']]
 

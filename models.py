@@ -5,7 +5,7 @@ AVERAGE_KEY = 'AVERAGE'
 
 
 class Player:
-    def __init__(self, name, hero, team, did_win):
+    def __init__(self, name, hero, team, party, did_win):
         # TODO: remove encoding hacks
         if hero == u'LÃºcio':
             hero = 'Lucio'
@@ -13,6 +13,7 @@ class Player:
         self.name = name
         self.hero = hero
         self.team = team
+        self.party = party
         self.did_win = did_win
 
 

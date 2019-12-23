@@ -49,16 +49,7 @@ print_streaks(all_games, at_least=4)
 print
 
 print '## Party\n'
-print all_games.filter(since(season2)).by_friends([
-    "jhgrng", "barcode",
-    "plasticbag", "plasticbox",
-    "dekusss",
-    "Thax",
-    "Tuddels", "Vesetoth",
-    "Snaps", "leroilyche", "RisingSun", "DNCMadhox", "Grabbax",
-    "Mike", "TempoKev", "kindaleek", "Chuppy", "NoctisRex",
-    "Mekaku", "Lived", "NadrkaniLer", "Deaddam5",
-]).at_least(5)
+print all_games.filter(since(season2)).by_party().at_least(5)
 print
 
 

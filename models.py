@@ -110,21 +110,25 @@ class GameList(list):
         keys = map(to_key, list(range(6, 24)) + list(range(0, 6)))
         return self.by(get_keys=lambda game: [to_key(game.started_at.hour)]).sorted_by_keys(keys)
 
-    def by_friends(self, names, including_solo=True):
+    def by_party(self):
         def get_keys(game):
-            teammate = PlayerPredicate(is_owner_teammate=True)
-            predicates = map(teammate.player, names)
-            solo = reduce((lambda p1, p2: p1 & ~p2), predicates, Predicate(lambda _: True))
+            # get other players in owner's party
+            party = [
+                p for p in game.players
+                if p != game.owner and p.party is not None and p.party == game.owner.party
+            ]
+            keys = [p.name for p in party]
 
-            k_p = zip(names, predicates)
-            if including_solo:
-                k_p += [("solo", solo)]
+            if party:
+                n = len(party) + 1
+                keys.append('party of {}'.format(n))
+            else:
+                keys.append('solo')
 
-            for (key, predicate) in k_p:
-                if predicate(game):
-                    yield key
+            return keys
 
         return self.by(get_keys, including_average=True)
+
 
     @property
     def winrate(self):

@@ -1,9 +1,14 @@
 def h1(text):
-    return '# {}\n'.format(text)
+    return any_heading(text, 1)
 
 
 def h2(text):
-    return '\n## {}\n'.format(text)
+    return '\n' + any_heading(text, 2)
+
+
+def any_heading(text, level):
+    text = '#' * level + ' ' + text
+    return '\033[1;37;49m{}\033[0;38;49m'.format(text) + '\n'
 
 
 def align_rows(rows, is_column_left_aligned=lambda i: i == 0):

@@ -9,22 +9,20 @@ since_back_to_SL = all_games.filter(since(back_to_SL))
 
 games = all_games.filter(as_("Sylvanas"))
 
-print '## Overall Sylvanas winrate\n'
+print text.h2('Overall Sylvanas winrate')
 print games
-print
 print
 
 at_least = 10
 print_synergies(games, at_least)
 print_counters(games, at_least)
 
-print '## Maps\n'
+print text.h2('Maps')
 print games.by_map().at_least(at_least)
-print
 
 print_days_of_the_week(since_back_to_SL)
 
-print "## Just after work\n"
+print text.h2("Just after work")
 
 def after_work(game):
     dt = game.started_at
@@ -34,29 +32,24 @@ def after_work(game):
 
 print since_back_to_SL.filter(after_work)
 print
-print
 
 print_week_by_week(all_games)
-print
 
-print '## Last games\n'
+print text.h2('Last games')
 for n in [10, 20, 30, 40, 50]:
     print 'last', n, 'games:', GameList(all_games[-n:])
 print
-print
 
 print_streaks(all_games, at_least=4)
-print
 
-print '## Party in season 2\n'
+print text.h2('Party in season 2')
 games = all_games.filter(since(season2))
 print games.by_party(including_party_size=False).at_least(5)
 print games.by_party(including_player_names=False)
-print
 
 
 if not True:
-    print '## Recent teammates\n'
+    print text.h2('Recent teammates')
     n = 1
     for name in sorted(set(p.name for g in all_games[-n:] for p in g.teammates)):
         print '-', name

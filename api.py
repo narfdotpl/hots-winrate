@@ -3,8 +3,10 @@ import os
 import pickle
 
 from constants import maps
-from models import Game, GameList, OwnerPredicate, PlayerPredicate, Predicate, align_rows
+from models import Game, GameList, OwnerPredicate, PlayerPredicate, Predicate
 from read_replays import PICKLED_DATA_PATH
+
+import text
 
 
 def load_games(owner, path=PICKLED_DATA_PATH, verbose=True):
@@ -28,6 +30,7 @@ Run this command every time you play new games.
     games = GameList(Game(g.players, g.map, g.started_at, owner) for g in filtered)
 
     if verbose:
+        print text.h1("HotS win rate")
         print "Loaded {} Storm League games with owner {}.\n".format(len(games), owner)
 
     return games
@@ -68,8 +71,7 @@ def since(date=None, days=0, weeks=0):
 
 
 def print_synergies(games, at_least=3):
-    print "## Synergies"
-    print
+    print text.h2("Synergies")
 
     by_owner = games.by_owner_hero()
     for (owner_hero, games) in sorted(by_owner.items(), key=lambda t: (-t[1].winrate.percentage, t[0])):
@@ -78,12 +80,9 @@ def print_synergies(games, at_least=3):
             print "When you play as {} with".format(owner_hero)
             print dct
 
-    print
-
 
 def print_counters(games, at_least=3):
-    print "## Targets / Counters"
-    print
+    print text.h2("Targets / Counters")
 
     by_owner = games.by_owner_hero()
     for (owner_hero, games) in sorted(by_owner.items(), key=lambda t: (-t[1].winrate.percentage, t[0])):
@@ -92,12 +91,9 @@ def print_counters(games, at_least=3):
             print "When you play as {} vs".format(owner_hero)
             print dct
 
-    print
-
 
 def print_heroes_by_map(games, at_least=3):
-    print "## Heroes by map"
-    print
+    print text.h2("Heroes by map")
 
     by_map = games.by_map(including_average=False)
     for (map, games) in sorted(by_map.items(), key=lambda t: (-t[1].winrate.percentage, t[0])):
@@ -106,11 +102,9 @@ def print_heroes_by_map(games, at_least=3):
             print "When you play on {} as".format(map)
             print dct
 
-    print
-
 
 def print_days_of_the_week(games):
-    print "## Win rate by day of the week\n"
+    print text.h2("Win rate by day of the week")
 
     day_names = ['Monday', 'Tuesday', 'Wednesday', 'Thursday', 'Friday', 'Saturday', 'Sunday']
     get_week_day = lambda game: game.started_at.date().weekday()
@@ -120,11 +114,10 @@ def print_days_of_the_week(games):
     names = ['work day', 'weekend']
     to_name = lambda n: names[int(is_weekend(n))]
     print games.by(lambda game: [to_name(get_week_day(game))]).sorted_by_keys(names)
-    print
 
 
 def print_week_by_week(games, start_date=date(2019, 7, 15), end_date=today):
-    print "## Win rate week by week\n"
+    print text.h2("Win rate week by week")
 
     rows = []
 
@@ -158,7 +151,7 @@ def print_week_by_week(games, start_date=date(2019, 7, 15), end_date=today):
         ]))
         date += week
 
-    print align_rows(rows, is_column_left_aligned=lambda i: i == 0 or i == len(rows[0]) - 1)
+    print text.align_rows(rows, is_column_left_aligned=lambda i: i == 0 or i == len(rows[0]) - 1)
 
 
 def get_streaks(games):
@@ -178,14 +171,14 @@ def get_streaks(games):
 
 
 def print_streaks(games, at_least=2):
-    print '## Longest winning, losing streaks\n'
+    print text.h2('Longest winning, losing streaks')
 
     key_games = [('overall', games)] + list(games.by_owner_hero().items())
     key_streaks = [(key, get_streaks(games)) for (key, games) in key_games]
     win_desc_loss_asc = lambda t: (-t[1][0], t[1][1])
     key_streaks = list(sorted(key_streaks, key=win_desc_loss_asc))
 
-    print align_rows([
+    print text.align_rows([
         map(str, ['{}: '.format(key), wins, ', ', losses]) for (key, (wins, losses)) in key_streaks
         if wins >= at_least or losses >= at_least
     ])

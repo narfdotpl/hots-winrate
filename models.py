@@ -110,18 +110,22 @@ class GameList(list):
         keys = map(to_key, list(range(6, 24)) + list(range(0, 6)))
         return self.by(get_keys=lambda game: [to_key(game.started_at.hour)]).sorted_by_keys(keys)
 
-    def by_party(self):
+    def by_party(self, including_party_size=True, including_player_names=True):
         def get_keys(game):
             # get other players in owner's party
             party = [
                 p for p in game.players
                 if p != game.owner and p.party is not None and p.party == game.owner.party
             ]
-            keys = [p.name for p in party]
+
+            keys = []
+            if including_player_names:
+                keys.extend(p.name for p in party)
 
             if party:
-                n = len(party) + 1
-                keys.append('party of {}'.format(n))
+                if including_party_size:
+                    n = len(party) + 1
+                    keys.append('party of {}'.format(n))
             else:
                 keys.append('solo')
 

@@ -48,8 +48,10 @@ print
 print_streaks(all_games, at_least=4)
 print
 
-print '## Party\n'
-print all_games.filter(since(season2)).by_party().at_least(5)
+print '## Party in season 2\n'
+games = all_games.filter(since(season2))
+print games.by_party(including_party_size=False).at_least(5)
+print games.by_party(including_player_names=False)
 print
 
 

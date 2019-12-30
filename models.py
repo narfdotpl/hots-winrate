@@ -18,6 +18,11 @@ class Player:
         self.party = party
         self.did_win = did_win
 
+    def __repr__(self):
+        return '<Player: {}>'.format(str(self))
+
+    def __str__(self):
+        return '{name} as {hero}'.format(**vars(self))
 
 
 class SerializedGame:

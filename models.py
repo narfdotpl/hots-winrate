@@ -49,7 +49,17 @@ class Game:
 
     @property
     def teammates(self):
+        """
+        Teammates of the owner.
+        """
         return [p for p in self.players if p.team == self.owner.team and p != self.owner]
+
+    @property
+    def party(self):
+        """
+        Players in a party with the owner.
+        """
+        return [p for p in self.teammates if p.party is not None and p.party == self.owner.party]
 
 
 class GameList(list):
@@ -115,10 +125,7 @@ class GameList(list):
     def by_party(self, including_party_size=True, including_player_names=True):
         def get_keys(game):
             # get other players in owner's party
-            party = [
-                p for p in game.players
-                if p != game.owner and p.party is not None and p.party == game.owner.party
-            ]
+            party = game.party
 
             keys = []
             if including_player_names:

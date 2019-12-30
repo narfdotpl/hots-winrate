@@ -48,7 +48,7 @@ enemy = PlayerPredicate(is_owner_teammate=False)
 as_ = owner.hero
 with_ = teammate.hero
 vs = enemy.hero
-
+solo = Predicate(lambda game: len(game.party) == 0)
 
 date = datetime.date
 today = datetime.date.today()

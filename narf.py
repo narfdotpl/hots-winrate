@@ -47,6 +47,9 @@ games = all_games.filter(since(season2))
 print games.by_party(including_party_size=False).at_least(5)
 print games.by_party(including_player_names=False)
 
+print text.h2('Solo games')
+print all_games.filter(since(season2) & solo).by_owner_hero()
+
 
 if not True:
     print text.h2('Recent teammates')

@@ -40,7 +40,7 @@ for n in [10, 20, 30, 40, 50]:
     print 'last', n, 'games:', GameList(all_games[-n:])
 print
 
-print_streaks(all_games, at_least=4)
+print_streaks(all_games.filter(since(season2)), at_least=4)
 
 print text.h2('Party in season 2')
 games = all_games.filter(since(season2))

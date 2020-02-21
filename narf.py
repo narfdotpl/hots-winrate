@@ -51,6 +51,12 @@ print text.h2('Solo games')
 print all_games.filter(since(season2) & solo).by_owner_hero()
 
 
+print text.h2('With or against')
+for hero in ['Alarak', 'Auriel', 'Azmodan', 'Deathwing', 'Varian']:
+    # print all_games.filter(since(season2)).by_hero(hero)
+    print all_games.by_hero(hero)
+
+
 if not True:
     print text.h2('Recent teammates')
     n = 1

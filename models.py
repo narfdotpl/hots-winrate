@@ -97,6 +97,17 @@ class GameList(list):
         return self.by(get_keys=lambda game: [p.hero for p in game.players if p.team == game.owner.team and p != game.owner],
                        including_average=True)
 
+    def by_hero(self, hero):
+        def get_keys(game):
+            for p in game.players:
+                if p.hero == hero:
+                    if p.team == game.owner.team:
+                        yield 'with ' + hero
+                    else:
+                        yield 'vs ' + hero
+
+        return self.by(get_keys=get_keys, including_average=True)
+
     def by_map(self, including_average=True):
         return self.by(get_keys=lambda game: [game.map],
                        including_average=including_average)

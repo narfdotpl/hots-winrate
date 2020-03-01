@@ -47,18 +47,9 @@ games = all_games.filter(since(season2))
 print games.by_party(including_party_size=False).at_least(5)
 print games.by_party(including_player_names=False)
 
-print text.h2('Solo games')
-print all_games.filter(since(season2) & solo).by_owner_hero()
+# print text.h2('Solo games')
+# print all_games.filter(since(season2) & solo).by_owner_hero()
 
-
-print text.h2('With or against')
-for hero in ['Alarak', 'Auriel', 'Azmodan', 'Deathwing', 'Varian']:
-    # print all_games.filter(since(season2)).by_hero(hero)
-    print all_games.by_hero(hero)
-
-
-if not True:
-    print text.h2('Recent teammates')
-    n = 1
-    for name in sorted(set(p.name for g in all_games[-n:] for p in g.teammates)):
-        print '-', name
+# print text.h2('With or against')
+# for hero in ['Alarak', 'Auriel', 'Azmodan', 'Deathwing', 'Varian']:
+#     print all_games.by_hero(hero)

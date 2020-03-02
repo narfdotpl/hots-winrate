@@ -70,6 +70,10 @@ def since(date=None, days=0, weeks=0):
     return after(date - datetime.timedelta(days=1))
 
 
+def party_size(size):
+    return Predicate(lambda game: len(game.party) == size - 1)
+
+
 def print_synergies(games, at_least=3):
     print text.h2("Synergies")
 

@@ -66,6 +66,10 @@ class Game:
         """
         return [p for p in self.teammates if p.party is not None and p.party == self.owner.party]
 
+    def __str__(self):
+        result = 'win' if self.owner.did_win else 'loss'
+        return '{} ({})'.format(self.map, result)
+
 
 class GameList(list):
     def filter(self, predicate):

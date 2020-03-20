@@ -60,6 +60,13 @@ class Game:
         return [p for p in self.players if p.team == self.owner.team and p != self.owner]
 
     @property
+    def enemies(self):
+        """
+        Enemies of the owner.
+        """
+        return [p for p in self.players if p.team != self.owner.team]
+
+    @property
     def party(self):
         """
         Players in a party with the owner.

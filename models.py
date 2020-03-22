@@ -220,18 +220,7 @@ class DictWithGames(dict):
         display_key_for_average = '-' * (1 + max(len(k) for (k, wr) in k_wr if k != AVERAGE_KEY))
 
         for (key, winrate) in sorted(k_wr, key=self.get_sorting_key()):
-            rows.append(map(str, [
-                display_key_for_average if key == AVERAGE_KEY else key + ": ",
-                winrate.percentage_text,
-                " (",
-                winrate.wins,
-                "/",
-                winrate.total,
-                ") (",
-                winrate.diff_sign,
-                abs(winrate.diff),
-                ")",
-            ]))
+            rows.append([display_key_for_average if key == AVERAGE_KEY else key + ": "] + winrate.text_row)
 
         return text.align_rows(rows)
 
@@ -267,6 +256,20 @@ class WinRate:
             return ""
         else:
             return "+"
+
+    @property
+    def text_row(self):
+        return map(str, [
+            self.percentage_text,
+            " (",
+            self.wins,
+            "/",
+            self.total,
+            ") (",
+            self.diff_sign,
+            abs(self.diff),
+            ")",
+        ])
 
     def __str__(self):
         return '{} ({}/{}) ({}{})'.format(self.percentage_text, self.wins, self.total, self.diff_sign, abs(self.diff))

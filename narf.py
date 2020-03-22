@@ -53,3 +53,5 @@ print games.by_party(including_player_names=False)
 # print text.h2('With or against')
 # for hero in ['Alarak', 'Auriel', 'Azmodan', 'Deathwing', 'Varian']:
 #     print all_games.by_hero(hero)
+
+print_strong_heroes(games)

@@ -1,9 +1,11 @@
+from collections import defaultdict
+
 import datetime
 import os
 import pickle
 
 from constants import maps
-from models import Game, GameList, OwnerPredicate, PlayerPredicate, Predicate
+from models import Game, GameList, OwnerPredicate, PlayerPredicate, Predicate, WinRate
 from read_replays import PICKLED_DATA_PATH
 
 import text
@@ -186,3 +188,57 @@ def print_streaks(games, at_least=2):
         map(str, ['{}: '.format(key), wins, ', ', losses]) for (key, (wins, losses)) in key_streaks
         if wins >= at_least or losses >= at_least
     ])
+
+
+def print_strong_heroes(games, at_least=20):
+    print text.h2('Strong heroes')
+
+    # {hero: (games, wins, loses)}
+    gwl = lambda: (GameList(), 0, 0)
+    by_hero = defaultdict(gwl)
+    for game in games:
+        for player in game.players:
+            (hero_games, wins, loses) = by_hero[player.hero]
+            hero_games += [game]
+            if player.did_win:
+                wins += 1
+            else:
+                loses += 1
+
+            by_hero[player.hero] = (hero_games, wins, loses)
+
+    def get_winrate(hero, games, get_players):
+        wins = 0
+        total = 0
+
+        for game in games:
+            for player in get_players(game):
+                if player.hero == hero:
+                    total += 1
+                    if player.did_win:
+                        wins += 1
+                    break
+
+        return WinRate(wins, total)
+
+    row = ['hero']
+    for header in ['overall', 'teammate', 'owner', 'enemy']:
+        row += [' ' + header] + [''] * 8
+    rows = [[s.upper() for s in row]]
+
+    hgwl = [[k] + list(v) for (k, v) in by_hero.items() if len(v[0]) >= at_least]
+    for (hero, games, wins, loses) in reversed(sorted(hgwl, key=lambda tpl: float(tpl[2]) / (tpl[2] + tpl[3]))):
+        winrate = WinRate(wins, wins + loses)
+        row = [hero + ':'] + winrate.text_row
+
+        for get_players in [
+            lambda game: game.teammates,
+            lambda game: [game.owner],
+            lambda game: game.enemies,
+        ]:
+            winrate = get_winrate(hero, games, get_players)
+            row += winrate.text_row
+
+        rows.append(row)
+
+    print text.align_rows(rows)

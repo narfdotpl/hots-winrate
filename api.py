@@ -190,8 +190,9 @@ def print_streaks(games, at_least=2):
     ])
 
 
-def print_strong_heroes(games, at_least=20):
-    print text.h2('Strong heroes')
+def print_strong_heroes(games, at_least=20, should_print_title=True):
+    if should_print_title:
+        print text.h2('Strong heroes')
 
     # {hero: (games, wins, loses)}
     gwl = lambda: (GameList(), 0, 0)
@@ -242,3 +243,12 @@ def print_strong_heroes(games, at_least=20):
         rows.append(row)
 
     print text.align_rows(rows)
+
+
+def print_strong_heroes_by_map(games, at_least=10, should_print_title=True):
+    print text.h2('Strong heroes by map')
+
+    maps = sorted(set(g.map for g in games))
+    for map in maps:
+        print text.h3(map)
+        print_strong_heroes(games.filter(on(map)), at_least=at_least, should_print_title=False)

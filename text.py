@@ -5,6 +5,8 @@ def h1(text):
 def h2(text):
     return '\n' + any_heading(text, 2)
 
+def h3(text):
+    return '\n' + any_heading(text, 3)
 
 def any_heading(text, level):
     text = '#' * level + ' ' + text
